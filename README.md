@@ -23,9 +23,9 @@ This project is responsible for indexing emails that come from the [Enron Corp](
   4. config thread write 10 and then 10 (or whatever you want)
   5. if you want disabled  profiling writing 'N'
 
-### Credentials Zincsearch
-user:admin
-password: Complexpass#123
+## Credentials Zincsearch
+**user**: admin  
+**password**: Complexpass#123
 
 # 2. Run Backend
 Execute Command:
