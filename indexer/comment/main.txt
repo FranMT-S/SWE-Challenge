@@ -1,0 +1,131 @@
+
+
+	// // path := "src/db/maildir"
+	// // path := "src/db/maildir/allen-p"
+
+	// // listFiles := ListAllFilesRecursive(path)[:100000]
+	// // listFiles := ListAllFilesQuoteBasic(path)
+	// // listFiles := ListAllFilesQueueSafe(path, 5)
+	// listFiles := []string{"src/db/maildir/beck-s/aec/2"}
+	// // listFiles := []string{"src/db/maildir/arora-h/sent_items/26"}
+	// // listFiles := []string{"src/db/maildir/allen-p/straw/7"}
+
+	// // for _, v := range listFiles {
+	// // 	fmt.Println(v)
+	// // }
+
+	// // indexer := core.Indexer{listFiles, parser.ParserNormal{}, bulker.CreateBulkerV1(), 5000}
+	// indexer := core.Indexer{listFiles, parser.NewParserAsyn(50), bulker.CreateBulkerV1(), 5000}
+	// indexer.Start()
+
+
+	
+func ReadLineForLineBufio(file *os.File) {
+
+	defer file.Close()
+	reader := bufio.NewReader(file)
+
+	json, _ := myWriter(true, false)
+	defer json.Close()
+
+	for {
+		lines, err := reader.ReadBytes('\n')
+
+		if err != nil {
+
+			if err == io.EOF {
+				log.Println(err)
+			}
+
+			break
+		}
+
+		json.Write(lines)
+		fmt.Println(string(lines))
+
+	}
+
+}
+
+func ReadLineForLine(file *os.File) {
+
+	defer file.Close()
+	buf := make([]byte, 1024)
+
+	json, _ := myWriter(true, false)
+	defer json.Close()
+
+	for {
+		n, err := file.Read(buf)
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+		if n > 0 {
+			json.Write(buf[:n])
+			fmt.Println(string(buf[:n]))
+		}
+	}
+}
+
+func ReadLineForLineScanner(file *os.File) {
+
+	defer file.Close()
+
+	json, _ := myWriter(true, false)
+	defer json.Close()
+
+	scanner := bufio.NewScanner(file)
+
+	for scanner.Scan() {
+		json.Write(scanner.Bytes())
+		fmt.Println(scanner.Text())
+	}
+}
+
+func myWriter(modeAppend bool, readWrite bool) (*os.File, error) {
+
+	name := "json/data" + time.Now().Format("02_150405") + ".json"
+
+	modes := os.O_CREATE
+	if readWrite {
+		modes |= os.O_RDWR
+	} else {
+		modes |= os.O_WRONLY
+	}
+
+	if modeAppend {
+		modes |= os.O_APPEND
+	} else {
+		modes |= os.O_TRUNC
+	}
+
+	return os.OpenFile(name, modes, 0644)
+
+}
+
+func createDirectoryIfNotExist() {
+	if _, err := os.Stat("json"); errors.Is(err, os.ErrNotExist) {
+		err := os.Mkdir("json", os.ModePerm)
+		if err != nil {
+			log.Println(err)
+		}
+	}
+}
+
+
+
+
+		// // path := "src/db/maildir/allen-p"
+
+	// listFiles := Helpers.ListAllFilesQuoteBasic(path)
+	// listFiles := Helpers.ListAllFilesQuoteBasic(path)[0:20000]
+
+	// // listFiles := []string{"db/maildir/arora-h/sent_items/26"}
+	// // listFiles := []string{"db/maildir/allen-p/straw/7"}
+	// listFiles := []string{"db/maildir/buy-r/inbox/15"}
+	// listFiles := []string{"db/maildir/buy-r/inbox/99"}
+	// listFiles := []string{"db/maildir/allen-p/_sent_mail/100"}
